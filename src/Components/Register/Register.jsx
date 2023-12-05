@@ -6,6 +6,8 @@ import { Form, useNavigate } from "react-router-dom";
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     password: "",
@@ -25,7 +27,10 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(e)
-    // Add your registration logic here
+    
+  
+
+    
     console.log("Registration submitted:", formData);
   };
 
@@ -42,8 +47,10 @@ const Register = () => {
           </Typography>
           <Input
             type="text"
+            id="firstName" 
+            name="firstName"
             className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-            
+            onChange={(e) => handleChange(e)} 
             labelProps={{
               className: "hidden",
             }}
@@ -54,7 +61,10 @@ const Register = () => {
           </Typography>
           <Input
             type="text"
+            id="lastName" 
+            name="lastName"
             className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
+            onChange={(e) => handleChange(e)} 
             labelProps={{
               className: "hidden",
             }}
