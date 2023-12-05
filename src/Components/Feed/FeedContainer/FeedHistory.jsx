@@ -3,11 +3,9 @@ import { Button, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { Form, useNavigate } from "react-router-dom";
 import ComplexNavbar from "../NavBar.jsx"
-import PostInput from "./PostInput";
-import FeedHistory from "./FeedHistory.jsx";
 import PostTemplate from "./PostTemplate.jsx";
 
-const FeedContainer = () => {
+const FeedHistory = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -40,14 +38,13 @@ const FeedContainer = () => {
 
   return (
     <>
-    
-    <div className="bg-white bg-opacity-75 w-auto h-screen lg:h-[38rem] shadow-2xl rounded-xl font-montserrat p-3">
-
-        <PostInput></PostInput>
-        <FeedHistory></FeedHistory>
+    <div className="bg-white mt-3 w-auto h-screen lg:h-[26.6rem] rounded-xl font-montserrat p-3 overflow-auto">
+    <PostTemplate></PostTemplate>
+    <PostTemplate></PostTemplate>
+    <PostTemplate></PostTemplate>
     </div>
     </>
   );
 };
 
-export default FeedContainer;
+export default FeedHistory;

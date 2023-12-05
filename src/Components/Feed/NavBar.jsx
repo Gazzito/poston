@@ -59,7 +59,7 @@ function ProfileMenu() {
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
-      <div className="ml-10">
+      <div className="lg:ml-10">
       <Button
           variant="text"
           color="blue-gray"

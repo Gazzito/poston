@@ -2,12 +2,9 @@
 import { Button, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { Form, useNavigate } from "react-router-dom";
-import ComplexNavbar from "../NavBar.jsx"
-import PostInput from "./PostInput";
-import FeedHistory from "./FeedHistory.jsx";
-import PostTemplate from "./PostTemplate.jsx";
+import CardPeople from "./CardPeople";
 
-const FeedContainer = () => {
+const OnlinePeople = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -41,13 +38,16 @@ const FeedContainer = () => {
   return (
     <>
     
-    <div className="bg-white bg-opacity-75 w-auto h-screen lg:h-[38rem] shadow-2xl rounded-xl font-montserrat p-3">
-
-        <PostInput></PostInput>
-        <FeedHistory></FeedHistory>
+    <div className="bg-white w-auto h-[38rem] shadow-2xl rounded-xl font-montserrat mx-5 p-3 overflow-auto">
+        <div className="p-3 rounded-xl h-auto bg-black bg-opacity-5"><Typography className="text-sm h-full font-montserrat font-extralight text-black leading-4">
+          My Friends
+        </Typography></div>
+        
+          <CardPeople></CardPeople>
+        
     </div>
     </>
   );
 };
 
-export default FeedContainer;
+export default OnlinePeople;
