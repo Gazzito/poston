@@ -4,10 +4,18 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './Components/Register/Register';
 import Login from './Components/Login/Login';
 import Feed from './Components/Feed/FeedPage';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
+
+
+const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <>
+    <QueryClientProvider client={queryClient}>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"></link>
     <Router>
       <div>
@@ -18,6 +26,7 @@ const App = () => {
         </Routes>
       </div>
     </Router>
+    </QueryClientProvider>
     </>
   );
 };

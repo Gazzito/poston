@@ -1,10 +1,38 @@
 // Register.js
 import { Button, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
+import { useMutation, useQuery } from "react-query";
 import { Form, useNavigate } from "react-router-dom";
 
-const Register = () => {
+const Login = () => {
   const navigate = useNavigate();
+  const [errors, setError] = useState('');
+  const sendLoginDetails = async (userToCreate) => {
+    try {
+      const response = await fetch("http://localhost:5022/login", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userToCreate),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(errorData)
+        setError(errorData)
+      } else {
+        navigate("/feed");
+      }
+    } catch (error) {
+      throw new Error(`Error creating User: ${error}`);
+    }
+  };
+
+  const mutation = useMutation(sendLoginDetails);
+
+
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -23,9 +51,16 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(e)
-    // Add your registration logic here
-    console.log("Login Button Clicked:", formData);
+    console.log(formData);
+    const formattedData = {
+      
+        Username: formData.username,
+        PasswordHash: formData.password,
+        user: null,
+    };
+    console.log(formattedData)
+    console.log(mutation.mutate(formattedData));
+    
   };
 
   return (
@@ -68,10 +103,18 @@ const Register = () => {
           <span className="text-lg font-montserrat">Login</span>
         </Button>
         <p className='font-montserrat flex justify-center text-highlight underline hover:text-primary hover:cursor-pointer mt-2' onClick={handleClickLink}>New here? Register then!</p>
+        {errors !== '' && (
+        <div className="">
+          {/* Display the error message to the user */}
+          <Typography variant="h5" color="white" className="font-montserrat font-bold mt-3">
+            {errors}
+          </Typography>
+        </div>
+      )}
         </form>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default Login;
