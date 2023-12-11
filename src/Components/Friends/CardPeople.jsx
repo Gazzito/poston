@@ -3,7 +3,7 @@ import { Avatar, Button, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { Form, useNavigate } from "react-router-dom";
 
-const CardPeople = () => {
+const CardPeople = ({userId, firstName, lastName, isOnline, profilePic}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -44,9 +44,10 @@ const CardPeople = () => {
               size="sm"
               alt="tania andrew"
               className="border border-gray-900 p-0.5"
-              src="https://www.nationalgeographic.pt/medio/import/attachment/revistas/192/MACACOS/macacos3A.jpg"
+              src={profilePic}
             />
-            <span className="ml-4">Telmo Gonçalves (Online)</span> 
+            <span className="ml-4">{firstName + " "+ lastName}</span> 
+            <span className="ml-4 border-4 border-primary rounded-full"></span> 
         </div>
        
     </div>

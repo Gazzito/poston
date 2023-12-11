@@ -9,6 +9,58 @@ import Groups from "./Groups.jsx";
 import { jwtDecode } from "jwt-decode";
 import * as signalR from '@microsoft/signalr';
 import { createConnection } from "../../Services/SignalR.jsx";
+import { useQuery } from "react-query";
+
+
+const fetchFriends = async (userId) => {
+  try {
+    const response = await fetch(`http://localhost:5022/friends?userId=${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.log(response);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("adasd", data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching friends:', error);
+    throw error;
+  }
+};
+
+const fetchUserDetails = async (userId) => {
+  try {
+    const response = await fetch(`http://localhost:5022/userDetails?userId=${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.log(response);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const dataUserDetails = await response.json();
+    console.log("userDetails", dataUserDetails);
+    return dataUserDetails;
+  } catch (error) {
+    console.error('Error fetching userDetails:', error);
+    throw error;
+  }
+};
+
+
 
 const Feed = () => {
   const navigate = useNavigate();
@@ -16,6 +68,10 @@ const Feed = () => {
   const decodedToken = jwtDecode(token);
   const [connections, setConnections] = useState(null);
   const [connectionState, setConnectionState] = useState("OFF")
+  const [isOnline, setIsOnline] = useState("Online")
+
+  
+
   useEffect(() => {
     const connection = createConnection();
 
@@ -65,12 +121,16 @@ const Feed = () => {
     };
   }, []); // Empty dependency array means the effect runs only once
 
+
+  
   const isOffline = () => {
     if (connections || connectionState === "Connected"){
       console.log("ENTROUUUU" ,  decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"])
        // Call the backend method
       connections.invoke("FriendOffline", decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
-
+      setIsOnline("Offline")
+    }else{
+      console.log("Erroo")
     }
 
   }
@@ -80,7 +140,9 @@ const Feed = () => {
       console.log("ENTROUUUU backonline" ,  decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"])
        // Call the backend method
       connections.invoke("FriendBackOnline", decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
-
+      setIsOnline("Online")
+    }else{
+      console.log("Erroo")
     }
 
   }
@@ -124,6 +186,9 @@ const Feed = () => {
 },[])
 
   useEffect(() => {
+    if(decodedToken["exp"]*1000 < Math.floor(Date.now() / 1000)){
+      navigate("/login");
+    }
     console.log(decodedToken)
     let inactivityTimer;
     
@@ -165,15 +230,33 @@ const Feed = () => {
     };
   }, [isUserActive]);
 
+  const { data, isLoading, isError, error } = useQuery(['friends', decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]], () => fetchFriends(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]));
+  const { data: dataUserDetails, isLoading: isLoadingUserDetails, isError: isErrorUserDetails, error: errorUserDetails } = useQuery(['userDetails', decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]], () => fetchUserDetails(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]));
+
+  if (isLoading || isLoadingUserDetails) {
+    return <p>Loading...</p>;
+  }else{
+    console.log(dataUserDetails)
+  }
+
+  if (isError || isErrorUserDetails) {
+    return <p>Error: {error.message}</p>;
+  }
+
+  const friends = data || []; // Ensure friends is not undefined
+  const userDetails = dataUserDetails || []
+
+
+
   return (
     <>
     
     <div className="mb-0 bg-gradient-to-t from-primary to-highlight font-montserrat min-h-screen flex justify-center items-center">
-    <ComplexNavbar></ComplexNavbar> 
+    <ComplexNavbar userDetails={userDetails}></ComplexNavbar> 
     <div className="hidden md:visible lg:visible fixed top-24 w-full lg:grid-container lg:grid lg:grid-cols-4 ">
         <div className="lg:col-span-1 "><Groups className=""></Groups></div>
         <div className="lg:col-span-2"><FeedContainer></FeedContainer></div>
-        <div className=""> <OnlinePeople></OnlinePeople></div>
+          <div className=""> <OnlinePeople friends={friends} isOnline={isOnline}></OnlinePeople></div>
         </div> 
     </div>
 

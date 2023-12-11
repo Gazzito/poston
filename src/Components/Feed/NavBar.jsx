@@ -52,9 +52,9 @@ const profileMenuItems = [
   },
 ];
  
-function ProfileMenu() {
+function ProfileMenu({profilePic}) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
- 
+  console.log(profilePic)
   const closeMenu = () => setIsMenuOpen(false);
  
   return (
@@ -72,7 +72,7 @@ function ProfileMenu() {
             size="sm"
             alt="tania andrew"
             className="border border-gray-900 p-0.5"
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+            src={profilePic}
           />
           <ChevronDownIcon
             strokeWidth={2.5}
@@ -153,9 +153,10 @@ function NavList() {
   );
 }
  
-export default function ComplexNavbar() {
+export default function ComplexNavbar({userDetails}) {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
  
+  console.log(userDetails[0].profilePic)
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
  
   React.useEffect(() => {
@@ -193,7 +194,7 @@ export default function ComplexNavbar() {
         >
           <Bars2Icon className="h-6 w-10" />
         </IconButton>
-        <ProfileMenu />
+        <ProfileMenu profilePic={userDetails[0].profilePic}/>
       </div>
       <Collapse open={isNavOpen} className="overflow-scroll">
         <NavList />
