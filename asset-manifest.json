@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/poston/static/css/main.712c98c8.css",
-    "main.js": "/poston/static/js/main.b8484736.js",
+    "main.js": "/poston/static/js/main.45e65e66.js",
     "static/js/787.5b55bae0.chunk.js": "/poston/static/js/787.5b55bae0.chunk.js",
     "index.html": "/poston/index.html",
     "main.712c98c8.css.map": "/poston/static/css/main.712c98c8.css.map",
-    "main.b8484736.js.map": "/poston/static/js/main.b8484736.js.map",
+    "main.45e65e66.js.map": "/poston/static/js/main.45e65e66.js.map",
     "787.5b55bae0.chunk.js.map": "/poston/static/js/787.5b55bae0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.712c98c8.css",
-    "static/js/main.b8484736.js"
+    "static/js/main.45e65e66.js"
   ]
 }
