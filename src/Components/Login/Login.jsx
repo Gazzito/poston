@@ -11,12 +11,6 @@ const Login = () => {
   const [errors, setError] = useState("");
   const { login } = useAuth();
 
-  useEffect(()=>{
-
-    if (localStorage.getItem('token')){
-      navigate('/feed');
-    }
-},[])
 
   
   const sendLoginDetails = async (userToCreate) => {

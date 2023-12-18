@@ -34,22 +34,6 @@ import { useNavigate } from "react-router-dom";
 // profile menu component
 const profileMenuItems = [
   {
-    label: "My Profile",
-    icon: UserCircleIcon,
-  },
-  {
-    label: "Edit Profile",
-    icon: Cog6ToothIcon,
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-  },
-  {
-    label: "Help",
-    icon: LifebuoyIcon,
-  },
-  {
     label: "Sign Out",
     icon: PowerIcon,
   },
@@ -123,14 +107,7 @@ function ProfileMenu({profilePic, onLogout}) {
  
 // nav list component
 const navListItems = [
-  {
-    label: "Feed",
-    icon: UserCircleIcon,
-  },
-  {
-    label: "Help",
-    icon: CodeBracketSquareIcon,
-  },
+  
 ];
  
 function NavList() {
@@ -180,7 +157,7 @@ export default function ComplexNavbar({userDetails,onSearchChange, isOffline }) 
         <Typography
           as="a"
           href="#"
-          className="font-montserrat mr-4 ml-2 cursor-pointer py-1.5 font-medium"
+          className="hidden md:visible lg: visible font-montserrat mr-4 ml-2 cursor-pointer py-1.5 font-medium"
         >
           PostON
         </Typography>

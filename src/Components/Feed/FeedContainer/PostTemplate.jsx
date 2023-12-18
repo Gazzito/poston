@@ -13,53 +13,120 @@ import {
   ShareIcon,
 } from "@heroicons/react/24/solid";
 
-const PostTemplate = () => {
+const PostTemplate = ({ post }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    password: "",
+  const [postData, setPostData] = useState({
+    postId: post.postId,
+    userId: post.user.userId,
+    firstName: post.user.firstName,
+    lastName: post.user.lastName,
+    profilePic: post.user.profilePic,
+    content: post.content,
+    likes: post.likes,
+    dislikes: post.dislikes,
+    createdOn: post.createdOn,
   });
 
+  const [likes, setLikes] = useState(post.likes) 
+  const [dislikes, setDislikes] = useState(post.dislikes) 
+  const handleLike = async () => {
+    try {
+      
+      const response = await fetch(`http://localhost:5022/likePost?postId=${postData.postId}`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+        body:  postData.postId,
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setLikes(data.likes)
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const handleDislike = async () => {
+    try {
+      const response = await fetch(`http://localhost:5022/dislikePost?postId=${postData.postId}`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+        body:  postData.postId,
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setDislikes(data.dislikes)
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
+// Usage
+const formattedDate = formatDate(postData.createdOn);
+
+  console.log(postData);
   const handleClickLink = () => {
     navigate("/login");
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(e);
 
-    console.log("Registration submitted:", formData);
+    console.log("Registration submitted:", postData);
   };
 
   return (
     <>
-      <div className="px-2 py-2 rounded-xl h-auto w-full">
-        <div className="grid grid-cols-12">
-          <div className="col-span-5 flex justify-start items-center">
+      <div className="lg:visible lg:lg:px-2 py-2 lg:rounded-xl lg:h-auto lg:w-full">
+        <div className="grid grid-cols-12 lg:grid lg:grid-cols-12">
+          <div className=" col-span-8 lg:col-span-5 flex justify-start items-center lg:z-10">
             <Avatar
               variant="circular"
               size="xl"
               alt="tania andrew"
               className="border border-gray-900 p-0.5"
-              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+              src={postData.profilePic}
             />
             <div className="ml-4">
-              <Typography className="text-xl">Ricardo Almeida</Typography>
+              <Typography className="text-base lg:text-xl">
+                {postData.firstName + " "+ postData.lastName}
+              </Typography>
             </div>
+            
           </div>
-          <div className="col-span-4 "></div>
-          <div className="col-span-3 flex justify-start items-center">
+          <div className="col-span-3 lg:col-span-6 flex justify-center items-center"><div className="lg:ml-10">
+              {" "}
+              <Typography className="text-xs ml-1 lg:ml-0">
+                Posted {formattedDate}
+              </Typography>
+            </div></div>
+          <div className="col-span-1 lg:col-span-1 lg:flex lg:justify-start lg:items-center">
             <Button
               variant="text"
               color="blue-gray"
@@ -76,83 +143,51 @@ const PostTemplate = () => {
         </div>
         <div className="mt-2 grid grid-rows-10">
           <div className="grid grid-cols-12 ">
-            <div className="col-span-2 flex justify-start items-center">
-              {" "}
-              <Typography className="text-xs">Posted 07/12/2023</Typography>
+          <div className="lg:col-span-2">
             </div>
-            <div className="col-span-9 break-all text-justify">
-              Há muito tempo atrás, decidi criar uma rede social, ao inicio
-              estava hesitante porque não sabia, se ia conseguir. Afinal, não é
-              qualquer pessoa que tem essa capacidade. Mas decidir acreditar nas
-              minhas capacidades e então estou a meio da mesma. Algo que queria
-              apenas partilhar, não desistam, acreditem em vocês!
+            <div className="text-sm lg:text-base col-span-9 break-all text-justify">
+              {postData.content}
             </div>
           </div>
-          <div className="grid grid-cols-12 gap-2 mt-4 text-white">
-            <div className="col-span-7"></div>
+          <div className="grid grid-cols-12 gap-2 mt-4 lg:text-white">
+            <div className="col-span-5 lg:col-span-7"></div>
             <div className="col-span-1 flex justify-center w-full items-center ">
-              <div className="">
-                <Button
-                  variant="text"
-                  color="blue-gray"
-                  className="hover:bg-black hover:bg-opacity-5 py-1 px-3 w-full bg-primary rounded-xl"
-                >
-                  <HandThumbUpIcon
-                    strokeWidth={10}
-                    className={`h-6 w-6 transition-transform  text-white ${
-                      isMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </Button>
-              </div>
+
+                
+                <div className="lg:col-span-6">
+                  <Button
+                    variant="text"
+                    color="blue-gray"
+                    onClick={handleLike}
+                    className="hover:bg-black hover:bg-opacity-5 py-1 px-3 w-full bg-primary rounded-xl"
+                  >
+                    <HandThumbUpIcon
+                      strokeWidth={10}
+                      className={`h-6 w-6 transition-transform  text-white ${
+                        isMenuOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </Button>
+                </div>
+                <div className="col-span-2 text-primary ml-2">  {likes}</div>
             </div>
-            <div className="col-span-1 flex justify-center w-full items-center ">
-              <div className="">
-                <Button
-                  variant="text"
-                  color="blue-gray"
-                  className="hover:bg-black hover:bg-opacity-5 py-1 px-3 w-full bg-primary rounded-xl"
-                >
-                  <HandThumbDownIcon
-                    strokeWidth={10}
-                    className={`h-6 w-6 transition-transform  text-white ${
-                      isMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </Button>
-              </div>
-            </div>
-            <div className="col-span-1 flex justify-center w-full items-center ">
-              <div className="">
-                <Button
-                  variant="text"
-                  color="blue-gray"
-                  className="hover:bg-black hover:bg-opacity-5 py-1 px-3 w-full bg-primary rounded-xl"
-                >
-                  <ChatBubbleBottomCenterIcon
-                    strokeWidth={10}
-                    className={`h-6 w-6 transition-transform  text-white ${
-                      isMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </Button>
-              </div>
-            </div>
-            <div className="col-span-1 flex justify-center w-full items-center ">
-              <div className="">
-                <Button
-                  variant="text"
-                  color="blue-gray"
-                  className="hover:bg-black hover:bg-opacity-5 py-1 px-3 w-full bg-primary rounded-xl"
-                >
-                  <ShareIcon
-                    strokeWidth={10}
-                    className={`h-6 w-6 transition-transform  text-white ${
-                      isMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </Button>
-              </div>
+            <div className="col-span-2 lg:col-span-1 flex justify-center w-full items-center ">
+            <div className="col-span-6 ml-20 lg:ml-20">
+                  <Button
+                    variant="text"
+                    color="blue-gray"
+                    onClick={handleDislike}
+                    className="hover:bg-black hover:bg-opacity-5 py-1 px-3 w-full bg-primary rounded-xl"
+                  >
+                    <HandThumbDownIcon
+                      strokeWidth={10}
+                      className={`h-6 w-6 transition-transform  text-white ${
+                        isMenuOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </Button>
+                </div>
+                <div className="lg:col-span-2 text-red-500 ml-2">  {dislikes}</div>
             </div>
           </div>
         </div>

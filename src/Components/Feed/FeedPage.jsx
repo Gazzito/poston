@@ -370,13 +370,13 @@ useEffect(() => {
     <ComplexNavbar onSearchChange={setSearchValue} userDetails={userDetails} isOffline = {setOffline}></ComplexNavbar> 
     <div className="hidden md:visible lg:visible fixed top-24 w-full lg:grid-container lg:grid lg:grid-cols-4 ">
         <div className="lg:col-span-1 "><Groups className=""></Groups></div>
-        <div className="lg:col-span-2"><FeedContainer searchValue={searchValue} users={users} isLoading={isLoadingSearch} userIdRequesting = {userId} refreshFriends={refreshFriends}></FeedContainer></div>
+        <div className="lg:col-span-2"><FeedContainer userId={userId} searchValue={searchValue} users={users} isLoading={isLoadingSearch} userIdRequesting = {userId} refreshFriends={refreshFriends}></FeedContainer></div>
           <div className=""> <OnlinePeople friends={friends} isOnline={isOnline}></OnlinePeople></div>
         </div> 
     </div>
 
     <div className="lg:hidden fixed top-24 w-full ">
-        <div className=""><FeedContainer searchValue={searchValue} users={users} isLoading={isLoadingSearch} userIdRequesting = {userId} refreshFriends={refreshFriends}></FeedContainer></div>
+        <div className=""><FeedContainer  userId={userId} searchValue={searchValue} users={users} isLoading={isLoadingSearch} userIdRequesting = {userId} refreshFriends={refreshFriends}></FeedContainer></div>
     </div> 
     
     
