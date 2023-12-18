@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Navbar,
   MobileNav,
@@ -14,6 +14,7 @@ import {
   Input,
   Collapse,
 } from "@material-tailwind/react";
+import debounce from 'lodash/debounce';
 import {
   CubeTransparentIcon,
   UserCircleIcon,
@@ -27,6 +28,7 @@ import {
   RocketLaunchIcon,
   Bars2Icon,
 } from "@heroicons/react/24/solid";
+import { useQuery } from "react-query";
  
 // profile menu component
 const profileMenuItems = [
@@ -54,7 +56,6 @@ const profileMenuItems = [
  
 function ProfileMenu({profilePic}) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  console.log(profilePic)
   const closeMenu = () => setIsMenuOpen(false);
  
   return (
@@ -153,10 +154,8 @@ function NavList() {
   );
 }
  
-export default function ComplexNavbar({userDetails}) {
+export default function ComplexNavbar({userDetails,onSearchChange }) {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
- 
-  console.log(userDetails[0].profilePic)
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
  
   React.useEffect(() => {
@@ -177,7 +176,10 @@ export default function ComplexNavbar({userDetails}) {
         >
           PostON
         </Typography>
-        <input className="mr-2 !border border-primary outline-none hover:transition-all hover:transform-gpu hover:scale-105  rounded-xl py-1 px-2"></input>
+        <input
+        placeholder="Search for friends"
+        onChange={(e) => onSearchChange(e.target.value)}
+         className="mr-2 !border border-primary outline-none hover:transition-all hover:transform-gpu hover:scale-105  rounded-xl py-1 px-2"></input>
 
         <div className="hidden lg:block">
           

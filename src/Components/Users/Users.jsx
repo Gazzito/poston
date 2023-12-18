@@ -2,13 +2,10 @@
 import { Button, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { Form, useNavigate } from "react-router-dom";
-import ComplexNavbar from "../NavBar.jsx"
-import PostInput from "./PostInput";
-import FeedHistory from "./FeedHistory.jsx";
-import PostTemplate from "./PostTemplate.jsx";
-import Users from "../../Users/Users.jsx";
+import UserList from "./UserList";
 
-const FeedContainer = ({searchValue, users, isLoadingSearch}) => {
+
+const Users = ({users, isLoadingSearch}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -17,7 +14,7 @@ const FeedContainer = ({searchValue, users, isLoadingSearch}) => {
     email: "",
     password: "",
   });
-
+  console.log(users);
   const handleClickLink = () => {
       navigate("/login")
   }
@@ -41,14 +38,11 @@ const FeedContainer = ({searchValue, users, isLoadingSearch}) => {
 
   return (
     <>
-    
-    <div className="bg-white bg-opacity-75 w-auto h-screen lg:h-[38rem] shadow-2xl rounded-xl font-montserrat p-3">
-      {searchValue ==='' ? (<div><PostInput></PostInput> <FeedHistory></FeedHistory></div>): (<div><Users users={users} isLoadingSearch={isLoadingSearch}></Users></div>)}
-        
-        
+    <div className="bg-white mt-3 w-auto h-screen lg:h-[26.6rem] rounded-xl font-montserrat p-3 overflow-auto">
+        <UserList users={users} isLoadingSearch={isLoadingSearch}></UserList>
     </div>
     </>
   );
 };
 
-export default FeedContainer;
+export default Users;

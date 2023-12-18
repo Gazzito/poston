@@ -1,6 +1,6 @@
 // Register.js
 import { Button, Input, Typography } from "@material-tailwind/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form, useLocation, useNavigate } from "react-router-dom";
 import ComplexNavbar from "./NavBar.jsx"
 import FeedContainer from "./FeedContainer/FeedContainer.jsx";
@@ -10,55 +10,9 @@ import { jwtDecode } from "jwt-decode";
 import * as signalR from '@microsoft/signalr';
 import { createConnection } from "../../Services/SignalR.jsx";
 import { useQuery } from "react-query";
+import { debounce } from "lodash";
 
 
-const fetchFriends = async (userId) => {
-  try {
-    const response = await fetch(`http://localhost:5022/friends?userId=${userId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      console.log(response);
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("adasd", data);
-    return data;
-  } catch (error) {
-    console.error('Error fetching friends:', error);
-    throw error;
-  }
-};
-
-const fetchUserDetails = async (userId) => {
-  try {
-    const response = await fetch(`http://localhost:5022/userDetails?userId=${userId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      console.log(response);
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const dataUserDetails = await response.json();
-    console.log("userDetails", dataUserDetails);
-    return dataUserDetails;
-  } catch (error) {
-    console.error('Error fetching userDetails:', error);
-    throw error;
-  }
-};
 
 
 
@@ -68,15 +22,98 @@ const Feed = () => {
   const decodedToken = jwtDecode(token);
   const [connections, setConnections] = useState(null);
   const [connectionState, setConnectionState] = useState("OFF")
-  const [isOnline, setIsOnline] = useState("Online")
+  const [isOnline, setIsOnline] = useState(true)
+  const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+  const [triggerFetch, setTriggerFetch] = useState(false);
+  const { data, isLoading, isError, error } = useQuery(
+    ['friends', userId],
+    () => fetchFriends(userId),
+    {
+      enabled: triggerFetch,
+      onSettled: () => {
+        // Reset triggerFetch after query completion
+        setTriggerFetch(false);
+      },
+    }
+  );
 
+  const [users, setUsers] = useState([]);
+  
+
+  const fetchFriends = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:5022/friends?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+      throw error;
+    }
+  };
+  
+  const fetchUserDetails = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:5022/userDetails?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const dataUserDetails = await response.json();
+      return dataUserDetails;
+    } catch (error) {
+      console.error('Error fetching userDetails:', error);
+      throw error;
+    }
+  };
+  
+  const fetchUsers = async (search) => {
+    try {
+      const response = await fetch(`http://localhost:5022/users?search=${search}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const dataSearch = await response.json();
+      setUsers(dataSearch);
+      console.log(dataSearch);
+      return dataSearch;
+    } catch (error) {
+      console.error('Error fetching userDetails:', error);
+      throw error;
+    }
+  };
+  
   
 
   useEffect(() => {
     const connection = createConnection();
-
+    
     const startConnection = async () => {
-      console.log("started connection function on feedPage.jsx");
       try {
         await connection.start();
         console.log('SignalR connection started');
@@ -95,22 +132,25 @@ const Feed = () => {
       console.log('SignalR connection closed');
     });
 
-    connection.on("FriendOnline", (friendUsername) => {
-      console.log(`${friendUsername} is online.`);
+    connection.on("FriendOnline", (userId) => {
+      setTriggerFetch(true);
+      console.log(`${userId} is online.`);
       // Implement your logic to display the notification to the user.
     });
 
     connection.on("FriendBackOnline", (userId) => {
+      setTriggerFetch(true);
       console.log(`${userId} is back Online.`);
       // Implement your logic to display the notification to the user.
     });
 
     connection.on("FriendOffline", (userId) => {
+      setTriggerFetch(true);
       console.log(`${userId} is offline.`);
       // Implement your logic to display the notification to the user.
     });
 
-
+    setTriggerFetch(true);
     // Clean up the connection when the component unmounts
     return () => {
       if (connection.state === 'Connected') {
@@ -125,10 +165,8 @@ const Feed = () => {
   
   const isOffline = () => {
     if (connections || connectionState === "Connected"){
-      console.log("ENTROUUUU" ,  decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"])
-       // Call the backend method
       connections.invoke("FriendOffline", decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
-      setIsOnline("Offline")
+      setIsOnline(false)
     }else{
       console.log("Erroo")
     }
@@ -137,16 +175,40 @@ const Feed = () => {
 
   const isBackOnline= () => {
     if (connections || connectionState === "Connected"){
-      console.log("ENTROUUUU backonline" ,  decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"])
-       // Call the backend method
       connections.invoke("FriendBackOnline", decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
-      setIsOnline("Online")
+      setIsOnline(true)
     }else{
       console.log("Erroo")
     }
 
   }
 
+
+  
+const [searchValue, setSearchValue] = useState('');
+const [debouncedValue, setDebouncedValue] = useState('');
+
+// Debounced search function
+const debouncedSearch = debounce((value) => {
+  setDebouncedValue(value);
+}, 500);
+
+// Update debouncedValue whenever searchValue changes
+useEffect(() => {
+  if (searchValue) {
+    debouncedSearch(searchValue);
+  }
+  // Cancel the debounce on unmount
+  return () => debouncedSearch.cancel();
+}, [searchValue]);
+
+const { dataSearch, isLoadingSearch, isErrorSearch, errorSearch, refetch } = useQuery(
+  ['users', debouncedValue],
+  () => fetchUsers(debouncedValue),
+  {
+    enabled: !!debouncedValue,
+  }
+);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -179,83 +241,95 @@ const Feed = () => {
 
 
   const [isUserActive, setIsUserActive] = useState(true);
-
+  const inactivityTimerRef = useRef(null);
   useEffect(()=>{
 
     createConnection();
 },[])
 
-  useEffect(() => {
-    if(decodedToken["exp"]*1000 < Math.floor(Date.now() / 1000)){
+
+
+
+
+
+
+useEffect(() => {
+  
+  const checkTokenExpiration = () => {
+    if (decodedToken["exp"] * 1000 < Date.now()) {
       navigate("/login");
     }
-    console.log(decodedToken)
-    let inactivityTimer;
-    
+  };
 
-    const resetInactivityTimer = () => {
-      if (!isUserActive) {
-        setIsUserActive(true);
-        console.log('User is active.');
-        isBackOnline()
-      }
+  // Call immediately and set an interval for continuous checking
+  checkTokenExpiration();
+  const tokenCheckInterval = setInterval(checkTokenExpiration, 60000); // Check every minute
 
-      clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => {
-        setIsUserActive(false);
-        isOffline();
-        console.log('User is inactive.');
-         // Send a WebSocket message to the backend to update last seen timestamp
-       //  websocket.send(JSON.stringify({userId: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"], expirationTime: decodedToken["exp"] * 1000}));
-      }, 5000); // Adjust the time threshold as needed
-    };
+  
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        resetInactivityTimer();
-      }
-    };
-   
-    document.addEventListener('mousemove', resetInactivityTimer);
-    document.addEventListener('keydown', resetInactivityTimer);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+  const resetInactivityTimer = () => {
+    if (!isUserActive) {
+      setIsUserActive(true);
+      console.log('User is active.');
+      isBackOnline();
+    }
 
-    // Cleanup event listeners on component unmount
-    return () => {
-      document.removeEventListener('mousemove', resetInactivityTimer);
-      document.removeEventListener('keydown', resetInactivityTimer);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      clearTimeout(inactivityTimer);
-     
-    };
-  }, [isUserActive]);
+    clearTimeout(inactivityTimerRef.current);
+    inactivityTimerRef.current = setTimeout(() => {
+      setIsUserActive(false);
+      isOffline();
+      console.log('User is inactive.');
+      
+    }, 10000); // Adjusted to 5 minutes
+  };
 
-  const { data, isLoading, isError, error } = useQuery(['friends', decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]], () => fetchFriends(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]));
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      resetInactivityTimer();
+      checkTokenExpiration(); // Re-check token expiration when tab is visible
+    }
+  };
+
+  document.addEventListener('mousemove', resetInactivityTimer);
+  document.addEventListener('keydown', resetInactivityTimer);
+  document.addEventListener('visibility', resetInactivityTimer);
+
+  return () => {
+    document.removeEventListener('mousemove', resetInactivityTimer);
+    document.removeEventListener('keydown', resetInactivityTimer);
+    document.removeEventListener('visibility', resetInactivityTimer);
+    clearTimeout(inactivityTimerRef.current);
+    clearInterval(tokenCheckInterval);
+  };
+}, [isUserActive, decodedToken, navigate]);
+
+ 
   const { data: dataUserDetails, isLoading: isLoadingUserDetails, isError: isErrorUserDetails, error: errorUserDetails } = useQuery(['userDetails', decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]], () => fetchUserDetails(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]));
 
   if (isLoading || isLoadingUserDetails) {
     return <p>Loading...</p>;
   }else{
-    console.log(dataUserDetails)
   }
+  
 
   if (isError || isErrorUserDetails) {
     return <p>Error: {error.message}</p>;
   }
 
   const friends = data || []; // Ensure friends is not undefined
+  
   const userDetails = dataUserDetails || []
-
+  console.log(users,"teste")
 
 
   return (
     <>
     
     <div className="mb-0 bg-gradient-to-t from-primary to-highlight font-montserrat min-h-screen flex justify-center items-center">
-    <ComplexNavbar userDetails={userDetails}></ComplexNavbar> 
+    <ComplexNavbar onSearchChange={setSearchValue} userDetails={userDetails}></ComplexNavbar> 
     <div className="hidden md:visible lg:visible fixed top-24 w-full lg:grid-container lg:grid lg:grid-cols-4 ">
         <div className="lg:col-span-1 "><Groups className=""></Groups></div>
-        <div className="lg:col-span-2"><FeedContainer></FeedContainer></div>
+        <div className="lg:col-span-2"><FeedContainer searchValue={searchValue} users={users} isLoading={isLoadingSearch}></FeedContainer></div>
           <div className=""> <OnlinePeople friends={friends} isOnline={isOnline}></OnlinePeople></div>
         </div> 
     </div>

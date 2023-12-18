@@ -27,7 +27,6 @@ const Login = () => {
       } else {
         response.json().then((data) => {
           const token = data;
-          console.log(token)
           login(token)
           navigate('/feed');
           // Now you can use the token as needed, such as decoding it
@@ -60,14 +59,12 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
     const formattedData = {
       Username: formData.username,
       PasswordHash: formData.password,
       user: null,
     };
-    console.log(formattedData);
-    console.log(mutation.mutate(formattedData));
+    mutation.mutate(formattedData);
   };
 
   return (
