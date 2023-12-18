@@ -376,7 +376,7 @@ useEffect(() => {
     </div>
 
     <div className="lg:hidden fixed top-24 w-full ">
-        <div className=""><FeedContainer></FeedContainer></div>
+        <div className=""><FeedContainer searchValue={searchValue} users={users} isLoading={isLoadingSearch} userIdRequesting = {userId} refreshFriends={refreshFriends}></FeedContainer></div>
     </div> 
     
     
