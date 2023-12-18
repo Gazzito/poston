@@ -24,11 +24,11 @@ const App = () => {
     
       <div>
         <Routes>
-        <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+        <Route path="https://gazzito.github.io/poston/" element={<Login />} />
+          <Route path="https://gazzito.github.io/poston/register" element={<Register />} />
+          <Route path="https://gazzito.github.io/poston/login" element={<Login />} />
           <Route
-          path="/feed"
+          path="https://gazzito.github.io/poston/feed"
           element={
             <ProtectedRoute>
               <Feed />

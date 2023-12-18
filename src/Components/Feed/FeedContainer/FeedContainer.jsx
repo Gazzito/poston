@@ -66,26 +66,6 @@ const FeedContainer = ({searchValue, users, userId, isLoadingSearch,userIdReques
     
   },[triggerFetch])
   
-  const handleClickLink = () => {
-      navigate("/login")
-  }
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e)
-    
-  
-
-    
-    console.log("Registration submitted:", formData);
-  };
 
   return (
     <>

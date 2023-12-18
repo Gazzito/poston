@@ -15,7 +15,7 @@ const Login = () => {
   
   const sendLoginDetails = async (userToCreate) => {
     try {
-      const response = await fetch("http://localhost:5022/login", {
+      const response = await fetch("http://192.168.1.236:5022/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,7 +31,7 @@ const Login = () => {
         response.json().then((data) => {
           const token = data;
           login(token)
-          navigate('/feed');
+          navigate('https://gazzito.github.io/poston/feed');
           // Now you can use the token as needed, such as decoding it
           // const decodedToken = jwt_decode(token);
           // console.log(decodedToken);
@@ -50,7 +50,7 @@ const Login = () => {
   });
 
   const handleClickLink = () => {
-    navigate("/register");
+    navigate("https://gazzito.github.io/poston/register");
   };
 
   const handleChange = (e) => {

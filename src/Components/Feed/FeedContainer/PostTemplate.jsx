@@ -33,7 +33,7 @@ const PostTemplate = ({ post }) => {
   const handleLike = async () => {
     try {
       
-      const response = await fetch(`http://localhost:5022/likePost?postId=${postData.postId}`, {
+      const response = await fetch(`http://192.168.1.236:5022/likePost?postId=${postData.postId}`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -55,7 +55,7 @@ const PostTemplate = ({ post }) => {
 
 const handleDislike = async () => {
     try {
-      const response = await fetch(`http://localhost:5022/dislikePost?postId=${postData.postId}`, {
+      const response = await fetch(`http://192.168.1.236:5022/dislikePost?postId=${postData.postId}`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -89,17 +89,6 @@ const handleDislike = async () => {
 // Usage
 const formattedDate = formatDate(postData.createdOn);
 
-  console.log(postData);
-  const handleClickLink = () => {
-    navigate("/login");
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-
-    console.log("Registration submitted:", postData);
-  };
 
   return (
     <>

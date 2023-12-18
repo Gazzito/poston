@@ -13,16 +13,13 @@ const UserCard = ({ key, userId, firstName, lastName, isOnline, profilePic , use
     password: "",
   });
   console.log("testeeeee",userId);
-  const handleClickLink = () => {
-    navigate("/login");
-  };
 
   
 
   const followUser = async (userRequesting, userReceiving) => {
     try {
         const requestBody = JSON.stringify({ userRequesting, userReceiving });
-      const response = await fetch(`http://localhost:5022/requestFriendship?userRequestingId=${userRequesting}&userReceivingId=${userReceiving}`, {
+      const response = await fetch(`http://192.168.1.236:5022/requestFriendship?userRequestingId=${userRequesting}&userReceivingId=${userReceiving}`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,

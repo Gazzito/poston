@@ -18,25 +18,6 @@ const CardPeople = ({
     email: "",
     password: "",
   });
-  console.log(isOnline)
-  const handleClickLink = () => {
-    navigate("/login");
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-
-    console.log("Registration submitted:", formData);
-  };
-
   return (
     <>
       <div className="p-3 mt-2 rounded-xl h-auto bg-black bg-opacity-5">

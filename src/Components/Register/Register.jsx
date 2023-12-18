@@ -8,7 +8,7 @@ const Register = () => {
   const [errors, setError] = useState("");
   const sendRegistrationData = async (userToCreate) => {
     try {
-      const response = await fetch(`http://localhost:5022/register`, {
+      const response = await fetch(`http://192.168.1.236:5022/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,7 +21,7 @@ const Register = () => {
         console.error(errorData);
         setError(errorData);
       } else {
-        navigate("/login");
+        navigate("https://gazzito.github.io/poston/login");
       }
     } catch (error) {
       throw new Error(`Error creating User: ${error}`);
@@ -40,7 +40,7 @@ const Register = () => {
   });
 
   const handleClickLink = () => {
-    navigate("/login");
+    navigate("https://gazzito.github.io/poston/login");
   };
 
   const handleChange = (e) => {

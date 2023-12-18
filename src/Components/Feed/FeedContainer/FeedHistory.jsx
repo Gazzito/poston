@@ -9,13 +9,6 @@ import CardPeople from "../../Friends/CardPeople.jsx";
 
 const FeedHistory = ({userId, postData, isLoading}) => {
   const navigate = useNavigate();
-  console.log(isLoading,"postDataLoading");
-  console.log(postData,"postData")
-
-  const handleClickLink = () => {
-      navigate("/login")
-  }
-
   
 
   return (

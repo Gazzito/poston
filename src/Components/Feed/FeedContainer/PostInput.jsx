@@ -17,7 +17,7 @@ const PostInput = ({userId,setTrigger}) => {
   
   const createPost = async (postToCreate) => {
     try {
-      const response = await fetch(`http://localhost:5022/createPost`, {
+      const response = await fetch(`http://192.168.1.236:5022/createPost`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,10 +50,6 @@ const PostInput = ({userId,setTrigger}) => {
   };
 
   const mutation = useMutation(createPost);
-
-  const handleClickLink = () => {
-      navigate("/login")
-  }
 
   const handleChange = (e) => {
     setFormData({

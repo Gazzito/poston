@@ -42,7 +42,7 @@ const Feed = () => {
  
   const setOffline = async (userToOffline) => {
     try {
-      const response = await fetch(`http://localhost:5022/setOffline?userId=${userId}`, {
+      const response = await fetch(`http://192.168.1.236:5022/setOffline?userId=${userId}`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -56,7 +56,7 @@ const Feed = () => {
         console.error(errorData);
       } else {
         response.json().then((data) => {
-          navigate('/login');
+          navigate('https://gazzito.github.io/poston/login');
           localStorage.removeItem("token"); // Example, adjust based on your auth mechanism
           // Now you can use the token as needed, such as decoding it
           // const decodedToken = jwt_decode(token);
@@ -73,7 +73,7 @@ const Feed = () => {
 
   const fetchFriends = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:5022/friends?userId=${userId}`, {
+      const response = await fetch(`http://192.168.1.236:5022/friends?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -96,7 +96,7 @@ const Feed = () => {
   
   const fetchUserDetails = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:5022/userDetails?userId=${userId}`, {
+      const response = await fetch(`http://192.168.1.236:5022/userDetails?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -124,7 +124,7 @@ const Feed = () => {
   
   const fetchUsers = async (search) => {
     try {
-      const response = await fetch(`http://localhost:5022/users?search=${search}&userId=${userId}`, {
+      const response = await fetch(`http://192.168.1.236:5022/users?search=${search}&userId=${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -260,26 +260,6 @@ const { dataSearch, isLoadingSearch, isErrorSearch, errorSearch, refetch } = use
     password: "",
   });
 
-  const handleClickLink = () => {
-      navigate("/login")
-  }
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e)
-    
-  
-
-    
-    console.log("Registration submitted:", formData);
-  };
 
 
   const [isUserActive, setIsUserActive] = useState(true);
@@ -299,7 +279,7 @@ useEffect(() => {
   
   const checkTokenExpiration = () => {
     if (decodedToken["exp"] * 1000 < Date.now()) {
-      navigate("/login");
+      navigate("https://gazzito.github.io/poston/login");
     }
   };
 

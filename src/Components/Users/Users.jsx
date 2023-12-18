@@ -15,9 +15,6 @@ const Users = ({users, isLoadingSearch, userIdRequesting, refreshFriends}) => {
     password: "",
   });
   console.log(users);
-  const handleClickLink = () => {
-      navigate("/login")
-  }
 
   const handleChange = (e) => {
     setFormData({
