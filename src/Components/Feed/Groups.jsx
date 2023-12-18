@@ -13,9 +13,6 @@ const Groups = () => {
     password: "",
   });
 
-  const handleClickLink = () => {
-      navigate("/login")
-  }
 
   const handleChange = (e) => {
     setFormData({

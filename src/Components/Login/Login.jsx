@@ -31,7 +31,7 @@ const Login = () => {
         response.json().then((data) => {
           const token = data;
           login(token)
-          navigate('https://gazzito.github.io/poston/feed');
+          navigate('/feed');
           // Now you can use the token as needed, such as decoding it
           // const decodedToken = jwt_decode(token);
           // console.log(decodedToken);
@@ -50,7 +50,7 @@ const Login = () => {
   });
 
   const handleClickLink = () => {
-    navigate("https://gazzito.github.io/poston/register");
+    navigate("/register");
   };
 
   const handleChange = (e) => {

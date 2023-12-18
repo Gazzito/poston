@@ -56,7 +56,7 @@ const Feed = () => {
         console.error(errorData);
       } else {
         response.json().then((data) => {
-          navigate('https://gazzito.github.io/poston/login');
+          navigate('/login');
           localStorage.removeItem("token"); // Example, adjust based on your auth mechanism
           // Now you can use the token as needed, such as decoding it
           // const decodedToken = jwt_decode(token);
@@ -279,7 +279,7 @@ useEffect(() => {
   
   const checkTokenExpiration = () => {
     if (decodedToken["exp"] * 1000 < Date.now()) {
-      navigate("https://gazzito.github.io/poston/login");
+      navigate("/login");
     }
   };
 

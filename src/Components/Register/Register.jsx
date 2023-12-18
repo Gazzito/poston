@@ -40,7 +40,7 @@ const Register = () => {
   });
 
   const handleClickLink = () => {
-    navigate("https://gazzito.github.io/poston/login");
+    navigate("/login");
   };
 
   const handleChange = (e) => {

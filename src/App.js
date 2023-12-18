@@ -1,6 +1,6 @@
 // App.js with routing
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, BrowserRouter } from 'react-router-dom';
 import Register from './Components/Register/Register';
 import Login from './Components/Login/Login';
 import Feed from './Components/Feed/FeedPage';
@@ -23,18 +23,20 @@ const App = () => {
     <Router>
     
       <div>
+      <BrowserRouter basename="/poston">
         <Routes>
-        <Route path="https://gazzito.github.io/poston/" element={<Login />} />
-          <Route path="https://gazzito.github.io/poston/register" element={<Register />} />
-          <Route path="https://gazzito.github.io/poston/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
           <Route
-          path="https://gazzito.github.io/poston/feed"
+          path="/feed"
           element={
             <ProtectedRoute>
               <Feed />
             </ProtectedRoute>
           }></Route>
         </Routes>
+        </BrowserRouter>
       </div>
     </Router>
     </QueryClientProvider>
