@@ -23,7 +23,7 @@ const App = () => {
     <Router>
     
       <div>
-      <BrowserRouter basename="/poston">
+      <BrowserRouter basename="/poston/">
         <Routes>
         <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
