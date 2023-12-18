@@ -29,6 +29,7 @@ import {
   Bars2Icon,
 } from "@heroicons/react/24/solid";
 import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
  
 // profile menu component
 const profileMenuItems = [
@@ -54,7 +55,7 @@ const profileMenuItems = [
   },
 ];
  
-function ProfileMenu({profilePic}) {
+function ProfileMenu({profilePic, onLogout}) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const closeMenu = () => setIsMenuOpen(false);
  
@@ -88,10 +89,11 @@ function ProfileMenu({profilePic}) {
       <MenuList className="p-1">
         {profileMenuItems.map(({ label, icon }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
+          const handleAction = isLastItem ? onLogout : closeMenu;
           return (
             <MenuItem
               key={label}
-              onClick={closeMenu}
+              onClick={handleAction}
               className={`flex items-center gap-2 rounded ${
                 isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
@@ -154,10 +156,16 @@ function NavList() {
   );
 }
  
-export default function ComplexNavbar({userDetails,onSearchChange }) {
+export default function ComplexNavbar({userDetails,onSearchChange, isOffline }) {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
- 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    isOffline();
+  };
+
+
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -196,7 +204,7 @@ export default function ComplexNavbar({userDetails,onSearchChange }) {
         >
           <Bars2Icon className="h-6 w-10" />
         </IconButton>
-        <ProfileMenu profilePic={userDetails[0].profilePic}/>
+        <ProfileMenu profilePic={userDetails[0].profilePic} onLogout={handleLogout}/>
       </div>
       <Collapse open={isNavOpen} className="overflow-scroll">
         <NavList />

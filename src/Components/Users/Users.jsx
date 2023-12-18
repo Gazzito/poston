@@ -5,7 +5,7 @@ import { Form, useNavigate } from "react-router-dom";
 import UserList from "./UserList";
 
 
-const Users = ({users, isLoadingSearch}) => {
+const Users = ({users, isLoadingSearch, userIdRequesting, refreshFriends}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -38,8 +38,8 @@ const Users = ({users, isLoadingSearch}) => {
 
   return (
     <>
-    <div className="bg-white mt-3 w-auto h-screen lg:h-[26.6rem] rounded-xl font-montserrat p-3 overflow-auto">
-        <UserList users={users} isLoadingSearch={isLoadingSearch}></UserList>
+    <div className="bg-white mt-3 w-auto h-full lg:h-full rounded-xl font-montserrat p-3 overflow-auto">
+        <UserList users={users} isLoadingSearch={isLoadingSearch} userIdRequesting={userIdRequesting} refreshFriends={refreshFriends}></UserList>
     </div>
     </>
   );

@@ -9,7 +9,7 @@ import Groups from "./Groups.jsx";
 import { jwtDecode } from "jwt-decode";
 import * as signalR from '@microsoft/signalr';
 import { createConnection } from "../../Services/SignalR.jsx";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { debounce } from "lodash";
 
 
@@ -38,6 +38,37 @@ const Feed = () => {
   );
 
   const [users, setUsers] = useState([]);
+  const [friends, setFriends] = useState([]);
+ 
+  const setOffline = async (userToOffline) => {
+    try {
+      const response = await fetch(`http://localhost:5022/setOffline?userId=${userId}`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userToOffline),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(errorData);
+      } else {
+        response.json().then((data) => {
+          navigate('/login');
+          localStorage.removeItem("token"); // Example, adjust based on your auth mechanism
+          // Now you can use the token as needed, such as decoding it
+          // const decodedToken = jwt_decode(token);
+          // console.log(decodedToken);
+        });
+      }
+    } catch (error) {
+      throw new Error(`Error creating User: ${error}`);
+    }
+  };
+
+
   
 
   const fetchFriends = async (userId) => {
@@ -55,6 +86,7 @@ const Feed = () => {
       }
   
       const data = await response.json();
+      setFriends(data);
       return data;
     } catch (error) {
       console.error('Error fetching friends:', error);
@@ -83,10 +115,16 @@ const Feed = () => {
       throw error;
     }
   };
+
+  const refreshFriends = () =>{
+
+      fetchFriends(userId);
+      fetchUsers(userId);
+  }
   
   const fetchUsers = async (search) => {
     try {
-      const response = await fetch(`http://localhost:5022/users?search=${search}`, {
+      const response = await fetch(`http://localhost:5022/users?search=${search}&userId=${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -107,7 +145,6 @@ const Feed = () => {
       throw error;
     }
   };
-  
   
 
   useEffect(() => {
@@ -170,6 +207,11 @@ const Feed = () => {
     }else{
       console.log("Erroo")
     }
+
+  }
+
+  const isOfflineLogout = ()  => {
+    
 
   }
 
@@ -316,7 +358,6 @@ useEffect(() => {
     return <p>Error: {error.message}</p>;
   }
 
-  const friends = data || []; // Ensure friends is not undefined
   
   const userDetails = dataUserDetails || []
   console.log(users,"teste")
@@ -326,10 +367,10 @@ useEffect(() => {
     <>
     
     <div className="mb-0 bg-gradient-to-t from-primary to-highlight font-montserrat min-h-screen flex justify-center items-center">
-    <ComplexNavbar onSearchChange={setSearchValue} userDetails={userDetails}></ComplexNavbar> 
+    <ComplexNavbar onSearchChange={setSearchValue} userDetails={userDetails} isOffline = {setOffline}></ComplexNavbar> 
     <div className="hidden md:visible lg:visible fixed top-24 w-full lg:grid-container lg:grid lg:grid-cols-4 ">
         <div className="lg:col-span-1 "><Groups className=""></Groups></div>
-        <div className="lg:col-span-2"><FeedContainer searchValue={searchValue} users={users} isLoading={isLoadingSearch}></FeedContainer></div>
+        <div className="lg:col-span-2"><FeedContainer searchValue={searchValue} users={users} isLoading={isLoadingSearch} userIdRequesting = {userId} refreshFriends={refreshFriends}></FeedContainer></div>
           <div className=""> <OnlinePeople friends={friends} isOnline={isOnline}></OnlinePeople></div>
         </div> 
     </div>

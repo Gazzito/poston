@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import UserCard from "./UserCard";
 
 
-const UserList = ({users,isLoadingSearch}) => {
+const UserList = ({users,isLoadingSearch, userIdRequesting, refreshFriends}) => {
 
 
 
@@ -12,12 +12,13 @@ const UserList = ({users,isLoadingSearch}) => {
   console.log(users)
   return (
     <>
-      {/* Render your CardPeople components using the 'friends' data */}
+      {/* Render your CardPeople components using the 'user' data */}
       {
        !users ? 
         (<div>Loading...</div>):
       users.map((user,index) => (
-        <UserCard key={user.userId} firstName={user.firstName} lastName={user.lastName} profilePic={user.profilePic} isOnline = {user.isOnline}/>
+        console.log(user.userId),
+        <UserCard userIdRequesting = {userIdRequesting} key={user.userId} userId={user.userId} firstName={user.firstName} lastName={user.lastName} profilePic={user.profilePic} isOnline = {user.isOnline} refreshFriends= {refreshFriends}/>
       ))}
     </>
   );

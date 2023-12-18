@@ -8,7 +8,7 @@ import FeedHistory from "./FeedHistory.jsx";
 import PostTemplate from "./PostTemplate.jsx";
 import Users from "../../Users/Users.jsx";
 
-const FeedContainer = ({searchValue, users, isLoadingSearch}) => {
+const FeedContainer = ({searchValue, users, isLoadingSearch,userIdRequesting,refreshFriends}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -43,7 +43,7 @@ const FeedContainer = ({searchValue, users, isLoadingSearch}) => {
     <>
     
     <div className="bg-white bg-opacity-75 w-auto h-screen lg:h-[38rem] shadow-2xl rounded-xl font-montserrat p-3">
-      {searchValue ==='' ? (<div><PostInput></PostInput> <FeedHistory></FeedHistory></div>): (<div><Users users={users} isLoadingSearch={isLoadingSearch}></Users></div>)}
+      {searchValue ==='' ? (<div><PostInput></PostInput> <FeedHistory></FeedHistory></div>): (<div><Users users={users} isLoadingSearch={isLoadingSearch} userIdRequesting={userIdRequesting} refreshFriends={refreshFriends}></Users></div>)}
         
         
     </div>

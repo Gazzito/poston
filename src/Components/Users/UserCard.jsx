@@ -3,7 +3,7 @@ import { Avatar, Button, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { Form, useNavigate } from "react-router-dom";
 
-const UserCard = ({ userId, firstName, lastName, isOnline, profilePic }) => {
+const UserCard = ({ key, userId, firstName, lastName, isOnline, profilePic , userIdRequesting, refreshFriends}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -12,17 +12,40 @@ const UserCard = ({ userId, firstName, lastName, isOnline, profilePic }) => {
     email: "",
     password: "",
   });
-  console.log(firstName);
+  console.log("testeeeee",userId);
   const handleClickLink = () => {
     navigate("/login");
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  
+
+  const followUser = async (userRequesting, userReceiving) => {
+    try {
+        const requestBody = JSON.stringify({ userRequesting, userReceiving });
+      const response = await fetch(`http://localhost:5022/requestFriendship?userRequestingId=${userRequesting}&userReceivingId=${userReceiving}`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+        body: requestBody,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(errorData);
+      } else {
+       refreshFriends(userRequesting)
+      }
+    } catch (error) {
+      throw new Error(`Error creating User: ${error}`);
+    }
   };
+
+  const followAuser = () =>{
+
+    followUser(userIdRequesting,userId)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,7 +58,7 @@ const UserCard = ({ userId, firstName, lastName, isOnline, profilePic }) => {
     <>
       <div className="p-3 mt-2 rounded-xl h-auto bg-black bg-opacity-5">
         <div className="grid grid-cols-12">
-          <div className="col-span-8 flex items-center border-2">
+          <div className="col-span-8 flex items-center">
             
               <Avatar
                 variant="circular"
@@ -55,9 +78,9 @@ const UserCard = ({ userId, firstName, lastName, isOnline, profilePic }) => {
 
             
             </div>
-            <div className="col-span-4 flex justify-end border-2">
-              <Button className=" bg-primary" type="submit">
-                <span className="text-base font-montserrat">Login</span>
+            <div className="col-span-4 flex justify-end">
+              <Button className=" bg-primary" onClick={followAuser}>
+                <span className="text-base font-montserrat">Seguir</span>
               </Button>
           </div>
         </div>

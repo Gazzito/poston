@@ -1,6 +1,6 @@
 // Register.js
 import { Button, Input, Typography } from "@material-tailwind/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { Form, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -10,6 +10,15 @@ const Login = () => {
   const navigate = useNavigate();
   const [errors, setError] = useState("");
   const { login } = useAuth();
+
+  useEffect(()=>{
+
+    if (localStorage.getItem('token')){
+      navigate('/feed');
+    }
+},[])
+
+  
   const sendLoginDetails = async (userToCreate) => {
     try {
       const response = await fetch("http://localhost:5022/login", {
